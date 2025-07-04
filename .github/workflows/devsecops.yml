@@ -20,7 +20,7 @@ jobs:
 
       - name: Run Semgrep (free, local scan)
         run: |
-          semgrep --config=auto --json > semgrep-results.json || true
+          semgrep --config=auto --sarif --output=semgrep.sarif || true
 
       - name: Fail if high severity Semgrep findings
         run: |
