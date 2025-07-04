@@ -22,6 +22,11 @@ jobs:
         run: |
           semgrep --config=auto --sarif --output=semgrep.sarif || true
 
+      - name: Upload SARIF to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: semgrep.sarif
+
       - name: Fail if high severity Semgrep findings
         run: |
           if grep -q '"severity": "ERROR"' semgrep-results.json; then
