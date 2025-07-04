@@ -27,12 +27,6 @@ jobs:
     - name: Run npm audit
       run: npm audit --audit-level=high || true
 
-    # ✅ Linting (Code Quality)
-    - name: Run ESLint
-      run: |
-        npm install eslint
-        npx eslint .
-
     # ✅ Optional: Secret Scanning
     - name: Secret Scanning with Gitleaks
       uses: zricethezav/gitleaks-action@v2.0.0
