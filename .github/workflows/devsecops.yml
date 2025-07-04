@@ -29,7 +29,7 @@ jobs:
 
     # ✅ Optional: Secret Scanning
     - name: Secret Scanning with Gitleaks
-      uses: zricethezav/gitleaks-action@v2.0.0
+      uses: zricethezav/gitleaks-action@v1.6.0
       with:
         config-path: .gitleaks.toml  # Optional custom config
 
