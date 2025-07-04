@@ -7,40 +7,59 @@ on:
     branches: [ main ]
 
 jobs:
-  devsecops:
-    name: DevSecOps Scan
+  semgrep:
+    name: Static Code Analysis (Semgrep)
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
+      - name: Install Semgrep
+        run: pip install semgrep
 
-    - name: Install dependencies
-      run: npm ci
+      - name: Run Semgrep (free, local scan)
+        run: |
+          semgrep --config=auto --json > semgrep-results.json || true
 
-    # ✅ Security Audit
-    - name: Run npm audit
-      run: npm audit --audit-level=high || true
+      - name: Fail if high severity Semgrep findings
+        run: |
+          if grep -q '"severity": "ERROR"' semgrep-results.json; then
+            echo "❌ Semgrep found high severity issues"
+            cat semgrep-results.json
+            exit 1
+          else
+            echo "✅ No high severity Semgrep findings"
+          fi
 
-    # ✅ Optional: Secret Scanning
-    - name: Secret Scanning with Gitleaks
-      uses: zricethezav/gitleaks-action@v1.6.0
-      with:
-        config-path: .gitleaks.toml  # Optional custom config
+  snyk:
+    name: Dependency Vulnerability Scan (Snyk)
+    runs-on: ubuntu-latest
 
-    # ✅ Optional: Static Analysis (e.g., Semgrep)
-    - name: Run Semgrep
-      uses: returntocorp/semgrep-action@v1
-      with:
-        config: "auto"  # Or use custom rule sets
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    # ✅ Optional: Dependency Scanning with Snyk
-    - name: Run Snyk to check for vulnerabilities
-      uses: snyk/actions/node@master
-      env:
-        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Snyk Test
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+  secrets:
+    name: Secrets Detection (TruffleHog)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Scan for secrets with TruffleHog
+        uses: trufflesecurity/trufflehog@main
