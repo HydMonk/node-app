@@ -20,12 +20,13 @@ jobs:
 
       - name: Run Semgrep (free, local scan)
         run: |
-          semgrep --config=auto --sarif --output=semgrep.sarif || true
+          semgrep --config=auto --json > semgrep-results.json || true
 
-      - name: Upload SARIF to GitHub Code Scanning
-        uses: github/codeql-action/upload-sarif@v2
+      - name: Upload Semgrep findings as artifact
+        uses: actions/upload-artifact@v4
         with:
-          sarif_file: semgrep.sarif
+          name: semgrep-findings
+          path: semgrep-results.json
 
       - name: Fail if high severity Semgrep findings
         run: |
