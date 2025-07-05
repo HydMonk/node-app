@@ -4,56 +4,62 @@ import axios from 'axios';
 const API = 'http://localhost:5000/api';
 
 function App() {
-  const [token, setToken] = useState('');
+  const [token, setToken] = useState(localStorage.getItem('token') || '');
   const [message, setMessage] = useState('');
   const [form, setForm] = useState({ username: '', password: '' });
 
   const login = async () => {
     try {
       const res = await axios.post(`${API}/login`, form);
-      setToken(res.data.token);
       localStorage.setItem('token', res.data.token);
-      setMessage('Login successful!');
+      setToken(res.data.token);
+      setMessage('✅ Login successful!');
     } catch (err) {
-      setMessage('Login failed.');
+      setMessage('❌ Login failed.');
     }
   };
 
   const getData = async () => {
     try {
       const res = await axios.get(`${API}/data`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
       setMessage(res.data.data);
     } catch (err) {
-      setMessage('Access denied.');
+      setMessage('❌ Unauthorized access.');
     }
+  };
+
+  const logout = () => {
+    setToken('');
+    localStorage.removeItem('token');
+    setMessage('Logged out.');
   };
 
   return (
     <div style={{ padding: '2rem' }}>
-      <h1>React + Node Auth Demo</h1>
+      <h1>React + Node + JWT Auth</h1>
 
-      {!token && (
+      {!token ? (
         <>
           <input
             type="text"
             placeholder="Username"
-            onChange={e => setForm({ ...form, username: e.target.value })}
+            onChange={(e) => setForm({ ...form, username: e.target.value })}
           /><br />
           <input
             type="password"
             placeholder="Password"
-            onChange={e => setForm({ ...form, password: e.target.value })}
+            onChange={(e) => setForm({ ...form, password: e.target.value })}
           /><br />
           <button onClick={login}>Login</button>
         </>
-      )}
-
-      {token && (
+      ) : (
         <>
           <button onClick={getData}>Get Protected Data</button>
-          <button onClick={() => { setToken(''); localStorage.clear(); }}>Logout</button>
+          <button onClick={logout}>Logout</button>
         </>
       )}
 
