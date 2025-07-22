@@ -91,19 +91,14 @@ jobs:
           with:
             fetch-depth: 0  # This ensures full commit history is available
 
-        - name: Install TruffleHog v2.2.1
-          run: pip install --user truffleHog==2.2.1
-
-        - name: Add ~/.local/bin to PATH
-          run: echo "$HOME/.local/bin" >> $GITHUB_PATH
-
-        - name: Run TruffleHog (v2)
-          run: trufflehog . 
-
-        - name: Upload TruffleHog report
-          uses: actions/upload-artifact@v4
-          with:
-            name: trufflehog-report
-            path: trufflehog.json
+        - name: TruffleHog OSS 
+          id: trufflehog 
+          uses: trufflesecurity/trufflehog@add-actions-cli-switch 
+          continue-on-error: true 
+          with: 
+            path: ./ 
+            base: "${{ github.event.repository.default_branch }}" 
+            head: HEAD 
+            extra_args: --debug --only-verified .
 
 
