@@ -107,7 +107,7 @@ jobs:
         - name: GitLeaks 
           uses: zricethezav/gitleaks-action@v2
           with:
-            config-path: .gitleaks.toml # Optional custom config
+            #config-path: .gitleaks.toml # Optional custom config
             args: --verbose --report-format json --report-path gitleaks-report.json
         - name: Upload Gitleaks Report
           uses: actions/upload-artifact@v4
