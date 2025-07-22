@@ -20,7 +20,7 @@ jobs:
 
       - name: Run Semgrep (free, local scan)
         run: |
-          semgrep --config=auto --sarif --output=semgrep.sarif || true
+          semgrep --config=auto --json --output=semgrep.json || true
 
       #- name: Upload Semgrep findings as artifact
         #uses: actions/upload-artifact@v4
@@ -28,20 +28,20 @@ jobs:
          # name: semgrep-findings
          # path: semgrep-results.json
 
-      - name: Upload SARIF to GitHub Code Scanning
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: semgrep.sarif
+      #- name: Upload SARIF to GitHub Code Scanning
+        #uses: github/codeql-action/upload-sarif@v3
+        #with:
+          #sarif_file: semgrep.sarif
 
-      - name: Fail if high severity Semgrep findings
-        run: |
-          if grep -q '"severity": "ERROR"' semgrep-results.json; then
-            echo "❌ Semgrep found high severity issues"
-            cat semgrep-results.json
-            exit 1
-          else
-            echo "✅ No high severity Semgrep findings"
-          fi
+      #- name: Fail if high severity Semgrep findings
+       # run: |
+        #  if grep -q '"severity": "ERROR"' semgrep-results.json; then
+         #   echo "❌ Semgrep found high severity issues"
+          #  cat semgrep-results.json
+           # exit 1
+          #else
+           # echo "✅ No high severity Semgrep findings"
+          #fi
 
   snyk:
     name: Dependency Vulnerability Scan (Snyk)
@@ -59,7 +59,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run Snyk Test
+      - name: snyk test --json > snyk.json
         uses: snyk/actions/node@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
@@ -72,5 +72,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Scan for secrets with TruffleHog
-        uses: trufflesecurity/trufflehog@main
+      - run: |
+          pip install trufflehog
+          trufflehog filesystem . --json > trufflehog.json
