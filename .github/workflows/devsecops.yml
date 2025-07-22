@@ -141,11 +141,9 @@ jobs:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
 
-      - name: SonarCloud Scan
+      - name: Run SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2
-        with:
-          organization: "TestOrg9901"   # From SonarCloud dashboard
-          projectKey: "TestOrg9901"   # Your repo's project key
-          token: ${{ secrets.SONAR_TOKEN }}
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
 
