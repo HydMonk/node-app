@@ -119,4 +119,33 @@ jobs:
             name: gitleaks-report
             path: gitleaks-report.json
 
+  sonarcloud:
+    name: SonarCloud Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Important for Sonar to get full Git history
+
+      - name: Set up JDK 17 (or 11)
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v2
+        with:
+          organization: "TestOrg9901"   # From SonarCloud dashboard
+          projectKey: "TestOrg9901"   # Your repo's project key
+          token: ${{ secrets.SONAR_TOKEN }}
+
 
