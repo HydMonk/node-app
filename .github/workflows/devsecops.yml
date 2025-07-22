@@ -98,7 +98,7 @@ jobs:
           run: echo "$HOME/.local/bin" >> $GITHUB_PATH
 
         - name: Run TruffleHog (v2)
-          run: trufflehog --json . > trufflehog.json || true
+          run: trufflehog . 
 
         - name: Upload TruffleHog report
           uses: actions/upload-artifact@v4
