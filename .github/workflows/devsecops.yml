@@ -100,4 +100,19 @@ jobs:
             head: ${{ github.ref_name }}
             extra_args: --debug --only-verified
 
+  GitLeaks:
+      name: Run GitLeaks
+      runs-on: ubuntu-latest
+      steps:
+        - name: GitLeaks 
+          uses: zricethezav/gitleaks-action@v2
+          with:
+            config-path: .gitleaks.toml # Optional custom config
+            args: --verbose --report-format json --report-path gitleaks-report.json
+        - name: Upload Gitleaks Report
+          uses: actions/upload-artifact@v4
+          with:
+            name: gitleaks-report
+            path: gitleaks-report.json
+
 
