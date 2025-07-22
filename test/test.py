@@ -1,1 +1,2 @@
 FAKE_AWS_SECRET_ACCESS_KEY = "AKIA1234567890FAKEKEYEXAMPLE"
+test_server = 'http://user:password@192.168.0.1:3128'
