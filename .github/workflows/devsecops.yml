@@ -93,7 +93,7 @@ jobs:
 
         - name: TruffleHog OSS 
           id: trufflehog 
-          uses: trufflesecurity/trufflehog@main
+          uses: trufflesecurity/trufflehog@feature1
           continue-on-error: true 
           with: 
             path: ./ 
