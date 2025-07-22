@@ -149,9 +149,6 @@ jobs:
         if: inputs.language == 'node'
         run: npm install
 
-      - name: Run secret scanning
-        uses: github/secret-scanning-action@v1
-
       - name: Run CodeQL (example only for supported languages)
         uses: github/codeql-action/init@v2
         with:
