@@ -104,6 +104,10 @@ jobs:
       name: Run GitLeaks
       runs-on: ubuntu-latest
       steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+          with:
+            fetch-depth: 0  # IMPORTANT: full history for Gitleaks
         - name: GitLeaks 
           uses: zricethezav/gitleaks-action@v2
           with:
