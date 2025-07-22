@@ -91,10 +91,14 @@ jobs:
           with:
             fetch-depth: 0  # This ensures full commit history is available
 
-        - name: Run TruffleHog (v3) and export JSON
-          run: |
-            docker run --rm -v "${{ github.workspace }}:/pwd" ghcr.io/trufflesecurity/trufflehog:latest \
-            files --directory /pwd --json > trufflehog.json || true
+        - name: Install TruffleHog v2.2.1
+          run: pip install --user truffleHog==2.2.1
+
+        - name: Add ~/.local/bin to PATH
+          run: echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+        - name: Run TruffleHog (v2)
+          run: trufflehog --json . > trufflehog.json || true
 
         - name: Upload TruffleHog report
           uses: actions/upload-artifact@v4
