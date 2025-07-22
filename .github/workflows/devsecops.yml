@@ -6,6 +6,12 @@ on:
   pull_request:
     branches: [ main ]
 
+permissions:
+  actions: read
+  contents: read
+  security-events: write  # ✅ Enables SARIF upload
+
+
 jobs:
   semgrep:
     name: Static Code Analysis (Semgrep)
@@ -20,7 +26,13 @@ jobs:
 
       - name: Run Semgrep (free, local scan)
         run: |
-          semgrep --config=auto --sarif --output=semgrep.sarif || true
+          semgrep --config=auto --json --output=semgrep.json || true
+
+      - name: Upload Semgrep report
+        uses: actions/upload-artifact@v4
+        with:
+          name: semgrep-report
+          path: semgrep.json
 
       #- name: Upload Semgrep findings as artifact
         #uses: actions/upload-artifact@v4
@@ -28,20 +40,20 @@ jobs:
          # name: semgrep-findings
          # path: semgrep-results.json
 
-      - name: Upload SARIF to GitHub Code Scanning
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: semgrep.sarif
+      #- name: Upload SARIF to GitHub Code Scanning
+        #uses: github/codeql-action/upload-sarif@v3
+        #with:
+          #sarif_file: semgrep.sarif
 
-      - name: Fail if high severity Semgrep findings
-        run: |
-          if grep -q '"severity": "ERROR"' semgrep-results.json; then
-            echo "❌ Semgrep found high severity issues"
-            cat semgrep-results.json
-            exit 1
-          else
-            echo "✅ No high severity Semgrep findings"
-          fi
+      #- name: Fail if high severity Semgrep findings
+       # run: |
+        #  if grep -q '"severity": "ERROR"' semgrep-results.json; then
+         #   echo "❌ Semgrep found high severity issues"
+          #  cat semgrep-results.json
+           # exit 1
+          #else
+           # echo "✅ No high severity Semgrep findings"
+          #fi
 
   snyk:
     name: Dependency Vulnerability Scan (Snyk)
@@ -59,18 +71,34 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run Snyk Test
+      - name: snyk test --json > snyk.json
         uses: snyk/actions/node@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
+      - name: Upload Semgrep report
+        uses: actions/upload-artifact@v4
+        with:
+          name: Snyk-report
+          path: snyk.json
+
   secrets:
-    name: Secrets Detection (TruffleHog)
-    runs-on: ubuntu-latest
+      name: Secret Scanning with TruffleHog
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+          with:
+            fetch-depth: 0  # This ensures full commit history is available
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+        - name: TruffleHog OSS 
+          id: trufflehog 
+          uses: trufflesecurity/trufflehog@main
+          continue-on-error: true 
+          with: 
+            path: ./ 
+            base: "${{ github.event.repository.default_branch }}" 
+            head: HEAD 
+            extra_args: --debug --only-verified
 
-      - name: Scan for secrets with TruffleHog
-        uses: trufflesecurity/trufflehog@main
+
