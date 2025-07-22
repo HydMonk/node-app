@@ -86,23 +86,15 @@ jobs:
       name: Secret Scanning with TruffleHog
       runs-on: ubuntu-latest
       steps:
-        - uses: actions/checkout@v4
+        - name: Checkout code
+          uses: actions/checkout@v4
 
-        - name: Set up Python
-          uses: actions/setup-python@v5
-          with:
-            python-version: '3.11'
+        - name: Run TruffleHog (v3) and export JSON
+          run: |
+            docker run --rm -v "${{ github.workspace }}:/pwd" ghcr.io/trufflesecurity/trufflehog:latest \
+            files --directory /pwd --json > trufflehog.json || true
 
-        - name: Install TruffleHog
-          run: pip install --user trufflehog
-
-        - name: Add user bin to PATH
-          run: echo "$HOME/.local/bin" >> $GITHUB_PATH
-
-        - name: Run TruffleHog and output JSON
-          run: trufflehog --json . > trufflehog.json || true
-
-        - name: Upload Semgrep report
+        - name: Upload TruffleHog report
           uses: actions/upload-artifact@v4
           with:
             name: trufflehog-report
