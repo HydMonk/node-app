@@ -132,4 +132,32 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
+  security-scan:
+    name: CodeQL
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup language (example for Node.js)
+        if: inputs.language == 'node'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies (Node example)
+        if: inputs.language == 'node'
+        run: npm install
+
+      - name: Run secret scanning
+        uses: github/secret-scanning-action@v1
+
+      - name: Run CodeQL (example only for supported languages)
+        uses: github/codeql-action/init@v2
+        with:
+          languages: ${{ inputs.language }}
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+
 
