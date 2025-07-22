@@ -28,6 +28,12 @@ jobs:
         run: |
           semgrep --config=auto --json --output=semgrep.json || true
 
+      - name: Upload Semgrep report
+        uses: actions/upload-artifact@v4
+        with:
+          name: semgrep-report
+          path: semgrep.json
+
       #- name: Upload Semgrep findings as artifact
         #uses: actions/upload-artifact@v4
         #with:
@@ -70,6 +76,12 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
+      - name: Upload Semgrep report
+        uses: actions/upload-artifact@v4
+        with:
+          name: Snyk-report
+          path: snyk.json
+
   secrets:
       name: Secret Scanning with TruffleHog
       runs-on: ubuntu-latest
@@ -89,3 +101,11 @@ jobs:
 
         - name: Run TruffleHog and output JSON
           run: trufflehog --json . > trufflehog.json || true
+
+        - name: Upload Semgrep report
+          uses: actions/upload-artifact@v4
+          with:
+            name: trufflehog-report
+            path: trufflehog.json
+
+
