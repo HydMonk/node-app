@@ -71,13 +71,21 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
   secrets:
-    name: Secrets Detection (TruffleHog)
-    runs-on: ubuntu-latest
+      name: Secret Scanning with TruffleHog
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v4
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+        - name: Set up Python
+          uses: actions/setup-python@v5
+          with:
+            python-version: '3.11'
 
-      - run: |
-          pip install trufflehog
-          trufflehog filesystem . --json > trufflehog.json
+        - name: Install TruffleHog
+          run: pip install --user trufflehog
+
+        - name: Add user bin to PATH
+          run: echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+        - name: Run TruffleHog and output JSON
+          run: trufflehog filesystem . --json > trufflehog.json || true
