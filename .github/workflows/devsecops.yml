@@ -6,6 +6,12 @@ on:
   pull_request:
     branches: [ main ]
 
+permissions:
+  actions: read
+  contents: read
+  security-events: write  # ✅ Enables SARIF upload
+
+
 jobs:
   semgrep:
     name: Static Code Analysis (Semgrep)
