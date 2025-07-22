@@ -88,4 +88,4 @@ jobs:
           run: echo "$HOME/.local/bin" >> $GITHUB_PATH
 
         - name: Run TruffleHog and output JSON
-          run: trufflehog filesystem . --json > trufflehog.json || true
+          run: trufflehog files --directory . --json > trufflehog.json || true
