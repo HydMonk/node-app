@@ -36,9 +36,9 @@ jobs:
 
       - name: Upload Semgrep results
         run: |
-          curl -X POST https://localhost:7217/Api/Process/upload \
+          curl -X POST https://localhost:7217/Api/Process/uploadfile \
             -H "Authorization: ApiKey 79f8d0ba-0a27-43c2-8d98-c833f06c5d04" \
-            -F "file=@semgrep.json"
+            -F "file=semgrep.json"
 
       #- name: Upload Semgrep findings as artifact
         #uses: actions/upload-artifact@v4
