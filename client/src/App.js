@@ -5,12 +5,12 @@ const API = 'http://localhost:5000/api';
 const FAKE_AWS_SECRET_ACCESS_KEY = "AKIA1234567890FAKEKEYEXAMPLE"
 const test_server = 'http://user:password@192.0.0.1:3128'
 
-AWS_ACCESS_KEY_ID = "AKIAIOSFODNN7EXAMPLE"
-AWS_SECRET_ACCESS_KEY = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+const AWS_ACCESS_KEY_ID = "AKIAIOSFODNN7EXAMPLE"
+const AWS_SECRET_ACCESS_KEY = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
 
-GITHUB_TOKEN = "ghp_1234567890abcdefghijklmnopqrstuvwx"
+const GITHUB_TOKEN = "ghp_1234567890abcdefghijklmnopqrstuvwx"
 
-SLACK_WEBHOOK = "https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX"
+const SLACK_WEBHOOK = "https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX"
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem('token') || '');
