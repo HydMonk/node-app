@@ -147,6 +147,12 @@ jobs:
             "https://sonarcloud.io/api/issues/search?componentKeys=testorg9901_testorg9901name" \
             -o sonar-results.json
 
+      - name: Upload JSON results
+        uses: actions/upload-artifact@v4
+        with:
+          name: sonar-json
+          path: sonar-results.json
+
   security-scan:
     name: CodeQL
     runs-on: ubuntu-latest
